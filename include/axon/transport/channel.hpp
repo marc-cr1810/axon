@@ -21,6 +21,9 @@
 #include <chrono>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>   // Added for fprintf
+#include <signal.h> // Added as per instruction
+#include <cerrno>   // Added as per instruction
 
 #include <axon/transport/chunk.hpp>
 #include <axon/transport/registry.hpp>
@@ -149,6 +152,18 @@ struct ChannelWriter
       if (!sub.active.load(std::memory_order_acquire))
         continue;
 
+      // Death detection: Check if the subscriber process is still alive.
+      // If kill(pid, 0) fails with ESRCH, the process crashed or exited
+      // without doing a clean teardown.
+      if (::kill(sub.pid, 0) == -1 && errno == ESRCH)
+      {
+        sub.active.store(false, std::memory_order_release);
+        uint32_t stale_q_off = sub.tail.exchange(0, std::memory_order_relaxed);
+        if (stale_q_off)
+          alloc->deallocate(stale_q_off, sizeof(OffsetQueue));
+        continue;
+      }
+
       // Each subscriber has its own OffsetQueue in shm
       uint32_t q_off = sub.tail.load(std::memory_order_relaxed);
       if (q_off == 0)
@@ -219,6 +234,17 @@ struct ChannelReader
     auto *p = try_take();
     if (p)
       return p;
+
+    // Hybrid polling: Spin for ~10us before falling asleep
+    // Assuming each cpu_pause() + loop overhead is ~10ns
+    for (int i = 0; i < 1000; ++i)
+    {
+      cpu_pause();
+      p = try_take();
+      if (p)
+        return p;
+    }
+
     if (notifier.wait_for(timeout))
       return try_take();
     return nullptr;

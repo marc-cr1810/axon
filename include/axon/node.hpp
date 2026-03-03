@@ -14,12 +14,15 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <string_view>
 #include <expected>
-#include <cstddef>
 
-#include <axon/error.hpp>
+#include "axon/error.hpp"
+#include "axon/shm/shm_allocator.hpp"
+#include "axon/shm/shm_segment.hpp"
+#include "axon/transport/registry.hpp"
 #include <axon/shm/shm_segment.hpp>
 #include <axon/shm/shm_allocator.hpp>
 #include <axon/transport/registry.hpp>

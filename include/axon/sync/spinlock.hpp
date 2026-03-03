@@ -8,6 +8,9 @@
 #pragma once
 
 #include <atomic>
+#include <thread>
+#include <cstdint>
+
 #include <axon/platform/cpu.hpp>
 
 namespace axon

@@ -32,12 +32,13 @@ std::vector<int> axon::find_efficiency_cores()
     if (!f)
       break;
     char buf[32]{};
-    (void)::fgets(buf, static_cast<int>(sizeof(buf)), f);
+    if (::fgets(buf, static_cast<int>(sizeof(buf)), f) != nullptr)
+    {
+      std::string_view sv{buf};
+      if (sv.find("efficiency") != sv.npos || sv.find("atom") != sv.npos)
+        cores.push_back(cpu);
+    }
     ::fclose(f);
-
-    std::string_view sv{buf};
-    if (sv.find("efficiency") != sv.npos || sv.find("atom") != sv.npos)
-      cores.push_back(cpu);
   }
 #endif
   return cores;

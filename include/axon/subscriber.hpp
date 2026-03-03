@@ -16,21 +16,18 @@
  */
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <functional>
-#include <thread>
-#include <vector>
 #include <atomic>
-#include <optional>
+#include <string_view>
+#include <string>
+#include <thread>
+#include <functional>
 #include <chrono>
 #include <cstdio>
+#include <cstring>
+#include <memory>
 #include <semaphore.h>
-#include <format>
-#include <sys/eventfd.h>
-#include <unistd.h>
 
-#include <axon/node.hpp>
+#include "axon/node.hpp"
 #include <axon/transport/channel.hpp>
 #include <axon/platform/cpu.hpp>
 #include <axon/error.hpp>
@@ -207,6 +204,9 @@ private:
 
     // Initialize the shared semaphore
     ::sem_init(&slot->wakeup_sem, 1, 0);
+
+    // Store PID for death detection
+    slot->pid = ::getpid();
 
     reader_.alloc = alloc;
     reader_.base = base;

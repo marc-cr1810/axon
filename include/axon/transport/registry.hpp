@@ -16,14 +16,15 @@
 #include <cstring>
 #include <string_view>
 #include <expected>
-#include <fnmatch.h>
 #include <vector>
 #include <string>
+#include <atomic>
 
 #include <semaphore.h>
 
-#include <axon/error.hpp>
-#include <axon/sync/spinlock.hpp>
+#include "axon/error.hpp"
+#include "axon/sync/spinlock.hpp"
+#include "axon/platform/cpu.hpp"
 
 namespace axon
 {
@@ -38,6 +39,7 @@ struct SubSlot
 {
   std::atomic<bool> active{false};
   std::atomic<uint32_t> tail{0}; ///< offsets to OffsetQueue
+  pid_t pid{0};
   sem_t wakeup_sem;
 };
 

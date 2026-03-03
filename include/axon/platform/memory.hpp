@@ -4,9 +4,10 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <cstddef>
 #include <sys/mman.h>
-#include <cerrno>
+#include <system_error>
 
 namespace axon
 {

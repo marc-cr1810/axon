@@ -15,8 +15,10 @@
 #pragma once
 
 #include <atomic>
-#include <cstddef>
 #include <cstdint>
+#include <cstddef>
+#include <atomic>
+
 #include <axon/platform/cpu.hpp>
 #include <axon/platform/clock.hpp>
 
