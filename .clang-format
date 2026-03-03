@@ -1,0 +1,15 @@
+---
+# Disable include reordering
+SortIncludes: Never
+
+# Match style guide formatting
+BasedOnStyle: LLVM
+BreakBeforeBraces: Allman
+IndentWidth: 2
+UseTab: Never
+ColumnLimit: 240
+SpaceBeforeParens: ControlStatements
+AlignAfterOpenBracket: Align
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
